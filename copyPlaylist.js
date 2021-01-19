@@ -233,6 +233,9 @@
     padding: 0 5px 5px 0;
     z-index: 3
 }
+.button.button-icon-only::before {
+    color: var(--modspotify_main_fg);
+}
 .order-controls-up {
     position: relative;
     top: 100%;
