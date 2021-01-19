@@ -366,12 +366,20 @@
     function highjackCreateDialog(tracks) {
         playlistDialogButton[0].click()
 
-       
         var createButton = document.querySelector("body > div.Modal__portal > div > div > div > div.PlaylistAnnotationModal__submit-button-container > button")
         var buttonContainer = document.querySelector("body > div.Modal__portal > div > div > div > div.PlaylistAnnotationModal__submit-button-container")
 
         var highjackedButton = createButton.cloneNode(true)
         highjackedButton.addEventListener("click", () => onCreateNewPlaylist(tracks))
+
+        window.addEventListener("keypress", (event) => {
+            if (event.code === `Enter`) {
+              // Cancel the default action, if needed
+              event.preventDefault();
+              // Trigger the button element with a click
+              createButton.click();
+            }
+          });
 
         createButton.remove()
         buttonContainer.insertAdjacentElement("afterbegin", highjackedButton)
@@ -401,11 +409,8 @@
         }
 
         createPlaylist(name)
-            .then((res) => {
-                addTracks(res.uri, tracks)
-                    .then((_) => Spicetify.showNotification(`Created Playlist: "${name}"`))
-                    .catch((err) => Spicetify.showNotification(`${err}`));
-            })
+            .then(res => addTracks(res.uri, tracks))
+            .then((_) => Spicetify.showNotification(`Created Playlist: "${name}"`))
             .catch((err) => Spicetify.showNotification(`${err}`));
 
         exitButton.click()

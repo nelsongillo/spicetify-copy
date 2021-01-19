@@ -17,3 +17,5 @@ Combine multiple playlist to a single big playlist:
 spicetify config extensions copyPlaylist.js
 spicetify apply
 ```
+## Important
+When creating a new Playlist you **MUST** to use the `Create` button, otherwise an empty playlist will be created.
