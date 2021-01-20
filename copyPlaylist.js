@@ -149,8 +149,6 @@
                     <button class="button button-green button-icon-only spoticon-chevron-up-16" data-tooltip="Move Up"></button>
                 </div>
                 <div class="order-controls-remove">    
-            <div class="order-controls-remove">    
-                <div class="order-controls-remove">    
                     <button class="button button-green button-icon-only spoticon-x-16" data-tooltip="Remove"></button>
                 </div>
                 <div class="order-controls-down">
