@@ -128,41 +128,44 @@
 
             this.innerHTML = `
 <div class="card card-horizontal card-type-album ${info.imgUri ? "" : "card-hidden-image"}" data-uri="${info.uri}" data-contextmenu="">
-<div class="card-attention-highlight-box"></div>
-<div class="card-horizontal-interior-wrapper">
-    ${info.imgUri ? `
-        <div class="card-image-wrapper">
-            <div class="card-image-hit-area">
-                <a class="card-image-link" link="${info.uri}">
-                    <div class="card-hit-area-counter-scale-left"></div>
-                    <div class="card-image-content-wrapper">
-                        <div class="card-image" style="background-image: url('${info.imgUri}')"></div>
-                    </div>
-                </a>
-                <div class="card-overlay"></div>
+    <div class="card-attention-highlight-box"></div>
+    <div class="card-horizontal-interior-wrapper">
+        ${info.imgUri ? `
+            <div class="card-image-wrapper">
+                <div class="card-image-hit-area">
+                    <a class="card-image-link" link="${info.uri}">
+                        <div class="card-hit-area-counter-scale-left"></div>
+                        <div class="card-image-content-wrapper">
+                            <div class="card-image" style="background-image: url('${info.imgUri}')"></div>
+                        </div>
+                    </a>
+                    <div class="card-overlay"></div>
+                </div>
             </div>
-        </div>
-    ` : ""}
-    <div class="card-info-wrapper">
-        <div class="order-controls">
-            <div class="order-controls-up">
-                <button class="button button-green button-icon-only spoticon-chevron-up-16" data-tooltip="Move Up"></button>
-            </div>
+        ` : ""}
+        <div class="card-info-wrapper">
+            <div class="order-controls">
+                <div class="order-controls-up">
+                    <button class="button button-green button-icon-only spoticon-chevron-up-16" data-tooltip="Move Up"></button>
+                </div>
+                <div class="order-controls-remove">    
             <div class="order-controls-remove">    
-                <button class="button button-green button-icon-only spoticon-x-16" data-tooltip="Remove"></button>
+                <div class="order-controls-remove">    
+                    <button class="button button-green button-icon-only spoticon-x-16" data-tooltip="Remove"></button>
+                </div>
+                <div class="order-controls-down">
+                    <button class="button button-green button-icon-only spoticon-chevron-down-16" data-tooltip="Move Down"></button>
+                </div>
             </div>
-            <div class="order-controls-down">
-                <button class="button button-green button-icon-only spoticon-chevron-down-16" data-tooltip="Move Down"></button>
-            </div>
+            <a class="card-info-link" ${info.uri}>
+                <div class="card-info-content-wrapper">
+                    <div class="card-info-title"><span class="card-info-title-text">${info.name}</span></div>
+                    <div class="card-info-subtitle-owner"><span>${info.owner}</span></div>
+                    <div class="card-info-subtitle-tracks"><span>${info.tracks.length === 1 ? "1 Track" : `${info.tracks.length} Tracks`}</span></div>
+                </div>
+            </a>
         </div>
-        <a class="card-info-link" ${info.uri}>
-            <div class="card-info-content-wrapper">
-                <div class="card-info-title"><span class="card-info-title-text">${info.name}</span></div>
-                <div class="card-info-subtitle-description"><span>${info.owner}</span></div>
-            </div>
-        </a>
     </div>
-</div>
 </div>`
 
             const up = this.querySelector(".order-controls-up")
@@ -194,10 +197,8 @@
     const LIST = new PlaylistCollection()
 
     // New Playlist Button
-    const playlistDialogButton = document.getElementsByClassName("LeftSidebarNewPlaylistButton__button")
-    if (!playlistDialogButton || playlistDialogButton.length === 0) {
-        return
-    }
+    const playlistDialogButton = document.querySelector("#new-playlist-button-mount-point > div > button")
+    if (!playlistDialogButton) return;
 
     document.querySelector("#view-browser-navigation-top-bar")
         .append(createTopBarButton())
@@ -247,6 +248,13 @@
 .order-controls-down {
     position: relative;
     bottom: 100%;
+}
+.card-info-subtitle-owner {
+    color: var(--modspotify_secondary_fg);
+}
+.card-info-subtitle-tracks {
+    font-weight: lighter;
+    color: var(--modspotify_secondary_fg);
 }
 `
 
@@ -364,7 +372,7 @@
 
     // Highjack Spotifies 'New Playlist' Dialog
     function highjackCreateDialog(tracks) {
-        playlistDialogButton[0].click()
+        playlistDialogButton.click()
 
         var createButton = document.querySelector("body > div.Modal__portal > div > div > div > div.PlaylistAnnotationModal__submit-button-container > button")
         var buttonContainer = document.querySelector("body > div.Modal__portal > div > div > div > div.PlaylistAnnotationModal__submit-button-container")
