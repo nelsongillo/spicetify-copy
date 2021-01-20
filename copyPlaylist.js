@@ -1,6 +1,6 @@
 // NAME: Copy Playlists
 // AUTHOR: einzigartigerName
-// DESCRIPTION: Works together with the App "Copy Playlist" to allow copying and combining Playlist directly in Spotify
+// DESCRIPTION: copy/combine playlist/queue directly in Spotify
 
 (function CopyPlaylist() {
 
@@ -67,9 +67,9 @@
             this.apply()
         }
 
-        removeFromStorage(uri) {
+        removeFromStorage(id) {
             const storage = this.getStorage()
-                .filter(item => item.uri !== uri)
+                .filter(item => item.id !== id)
 
             LocalStorage.set(STORAGE_KEY, JSON.stringify(storage));
             this.apply()
@@ -120,7 +120,7 @@
 
     /*
     * Displays Stored Playlist
-    * {uri, name, tracks, imgUri, owner} 
+    * {id, uri, name, tracks, imgUri, owner} 
     */
     class CardContainer extends HTMLElement {
         constructor(info) {
@@ -174,7 +174,7 @@
 
             const remove = this.querySelector(".order-controls-remove")
             remove.onclick = (event) => {
-                LIST.removeFromStorage(info.uri)
+                LIST.removeFromStorage(info.id)
                 event.stopPropagation()
             }
 
@@ -186,7 +186,10 @@
 
             const imageLink = this.querySelector(".card-image-link");
             const infoLink = this.querySelector(".card-info-link");
-            infoLink.onclick = imageLink.onclick = showPlaylist;
+
+            if (imageLink) imageLink.addEventListener("click", ((e) => showPlaylist(e)));
+            
+            if (infoLink) infoLink.addEventListener("click", ((e) => showPlaylist(e)));
         }
     }
 
@@ -207,6 +210,40 @@
     /**************************************************************************
                                 UI Building
     **************************************************************************/
+    // If Queue Page add Buttons
+    const iframeInterval = setInterval(() => {
+        /** @type {HTMLIFrameElement} */
+        const currentIframe = document.querySelector("iframe.active");
+        if (!currentIframe ||
+            currentIframe.id !== "app-queue"
+        ) {
+            return;
+        }
+
+        const headers = currentIframe.contentDocument.querySelectorAll(
+            ".glue-page-header__buttons"
+        );
+
+        for (const e of headers) {
+                e.append(createQueueButton(
+                    "Save as Playlist",
+                    "Save the current Queue as a new Playlist",
+                    () => {
+                        let tracks = getQueueTracks();
+                        highjackCreateDialog(tracks);
+                    },
+                ));
+
+                e.append(createQueueButton(
+                    "Copy into Buffer",
+                    "Insert the current Queue into the Buffer",
+                    () => { queueToBuffer() },
+                ));
+        }
+
+        if (headers.length > 0) clearInterval(iframeInterval);
+    }, 500)
+
     // Creates the Main Menu
     function createMenu() {
         const container = document.createElement("div")
@@ -265,6 +302,7 @@
         return { container, menu }
     }
 
+    // Creates a Button in the Combine Menu
     function createMenuItem(name, callback) {
         const item = document.createElement("div");
         item.classList.add("item");
@@ -368,6 +406,16 @@
         return select;
     }
 
+    // Queue button
+    function createQueueButton(name, tooltip, callback) {
+        const b = document.createElement("button");
+        b.classList.add("button", "button-green");
+        b.innerText = name;
+        b.setAttribute("data-tooltip", tooltip);
+        b.onclick = callback;
+        return b;
+    }
+
     // Highjack Spotifies 'New Playlist' Dialog
     function highjackCreateDialog(tracks) {
         playlistDialogButton.click()
@@ -426,6 +474,38 @@
         }
     }
 
+    // Get All Tracks in Queue and remove delimiter
+    function getQueueTracks() {
+        return Spicetify.Queue.next_tracks
+            .map((t) => t.uri)
+            .filter((t) => { return t != "spotify:delimiter"; })
+    }
+
+    // Copy the Queue to the Combine Buffer
+    function queueToBuffer() {
+        let tracks = getQueueTracks();
+
+        var date = new Date()
+        var year = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(date);
+        var month = new Intl.DateTimeFormat('en', { month: 'short' }).format(date);
+        var day = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(date);
+        
+        const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: false};
+        var time = new Intl.DateTimeFormat(`en`, timeOptions).format(date);
+
+        let queue = {
+            id: `spotify:queue-${date}`,
+            uri: `spotify:queue`,
+            name: "Queue",
+            imgUri: undefined,
+            tracks: tracks,
+            owner: `${time} - ${day} ${month} ${year}`,
+        }
+
+        LIST.addToStorage(queue);
+    }
+
+    // Show the clicked Playlist
     async function showPlaylist(event) {
         console.log(event)
     }
@@ -507,12 +587,13 @@
                         return;
                     }
 
+                    let id = `${uri}-${new Date()}`
                     let tracks = res.items.map((track) => track.link)
                     let img = res.playlist.picture
                     let name = res.playlist.name
                     let owner = res.playlist.owner.name
 
-                    let playlist = {uri: uri, name: name, tracks: tracks, imgUri: img, owner: owner}
+                    let playlist = {id: id, uri: uri, name: name, tracks: tracks, imgUri: img, owner: owner}
                     
                     resolve(playlist);
                 }
