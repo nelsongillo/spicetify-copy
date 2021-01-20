@@ -1,6 +1,6 @@
 # Spicetify Copy
 
-Spicetify Extension which allows you to copy playlists directly in Spotify
+Spicetify extension which allows you to copy playlists directly in Spotify
 
 ## Preview
 Copy a single playlist:  
@@ -18,4 +18,4 @@ spicetify config extensions copyPlaylist.js
 spicetify apply
 ```
 ## Important
-When creating a new Playlist you **MUST** to use the `Create` button, otherwise an empty playlist will be created.
+When creating a new Playlist you **MUST** use the `Create` button, otherwise an empty playlist will be created.
