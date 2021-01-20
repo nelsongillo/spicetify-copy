@@ -1,6 +1,6 @@
 # Spicetify Copy
 
-Spicetify extension which allows you to copy playlists directly in Spotify
+Spicetify extension which allows you to copyand combine playlists/queue directly in Spotify.
 
 ## Preview
 Copy a single playlist:  
@@ -8,6 +8,9 @@ Copy a single playlist:
 
 Combine multiple playlist to a single big playlist:  
 ![Screenshot Crad](screenshot_card.png)
+
+Create a new playlist from Queue or copy into the buffer:
+![Screenshot Queue](screenshot_queue.png)
 
 ## Installation
 * Download and install [Spicetify](https://github.com/khanhas/spicetify-cli.git)
