@@ -476,9 +476,14 @@
 
     // Get All Tracks in Queue and remove delimiter
     function getQueueTracks() {
-        return Spicetify.Queue.next_tracks
-            .map((t) => t.uri)
-            .filter((t) => { return t != "spotify:delimiter"; })
+        let tracks = Spicetify.Queue.next_tracks;
+        let index = tracks.findIndex((t) => t.uri === "spotify:delimiter");
+
+        if (index !== -1) {
+            tracks.length = index;
+        }
+
+        return tracks.map((t) => t.uri)
     }
 
     // Copy the Queue to the Combine Buffer
