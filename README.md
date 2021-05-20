@@ -1,4 +1,4 @@
-# Spicetify Copy
+# Spicetify Copy for Spotify v1.1.56 or older
 
 Spicetify extension which allows you to copyand combine playlists/queue directly in Spotify.
 
